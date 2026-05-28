@@ -1,0 +1,63 @@
+name: Scraper Status Check
+
+on:
+  schedule:
+    # Check every hour
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  check-status:
+    runs-on: ubuntu-latest
+    name: Check Scraper Status
+    steps:
+      - name: Check last run status
+        run: |
+          echo "Checking scraper status..."
+          curl -s -X GET "https://tiktok-intelligence-eta.vercel.app/api/cron/logs?key=${{ secrets.CRON_SECRET_KEY }}&limit=10" \
+            -H "User-Agent: GitHub-Actions-Status/1.0" \
+            --max-time 30 \
+            -o status.json
+
+      - name: Parse status
+        run: |
+          echo "Recent scraper activity:"
+          cat status.json | python3 -c "
+          import json, sys
+          try:
+              data = json.load(sys.stdin)
+              if 'stats' in data:
+                  print(f\"Success Rate: {data['stats']['successRate']}\")
+                  print(f\"Total Runs: {data['stats']['total']}\")
+                  print(f\"Failed: {data['stats']['failed']}\")
+                  print(f\"Last 24h: {data['stats']['last24h']['runs']} runs\")
+              if 'logs' in data and len(data['logs']) > 0:
+                  print(f\"\\nLast Run: {data['logs'][0]['type']} - {data['logs'][0]['status']} ({data['logs'][0]['count']} items)\")
+          except Exception as e:
+              print(f'Error parsing: {e}')
+          "
+
+      - name: Alert on high failure rate
+        run: |
+          cat status.json | python3 -c "
+          import json, sys
+          try:
+              data = json.load(sys.stdin)
+              if 'stats' in data:
+                  failed = data['stats']['failed']
+                  total = data['stats']['total']
+                  if total > 5 and failed / total > 0.5:
+                  print(f'WARNING: High failure rate detected ({failed}/{total})')
+                  sys.exit(1)
+          except Exception as e:
+              print(f'Error: {e}')
+          "
+        continue-on-error: true
+
+      - name: Upload status
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: status-check
+          path: status.json
+          retention-days: 1
