@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { HeroSection } from "@/components/hero-section";
 import { TrendCard } from "@/components/trend-card";
 import { VideoSection } from "@/components/video-section";
 import { AdSlot } from "@/components/ad-slot";
 import { FloatingTags } from "@/components/floating-tags";
-import { CountrySwitcher, countries, type Country } from "@/components/country-switcher";
+import { useCountry } from "@/components/country-context";
 import { OpportunityHero } from "@/components/opportunity-hero";
 import { TrendingTags } from "@/components/trending-tags";
 import { ShortsSection } from "@/components/shorts-section";
@@ -29,7 +29,7 @@ const sectionVideos = [
 ];
 
 export default function HomePage() {
-  const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0]);
+  const { selected: selectedCountry } = useCountry();
 
   const filteredTrends = useMemo(() =>
     trends.filter((t) => t.country === selectedCountry.code),
@@ -60,9 +60,6 @@ export default function HomePage() {
       <HeroSection />
 
       <AdSlot position="below-hero" />
-
-      {/* Country switcher — PRIMARY FILTER at top */}
-      <CountrySwitcher selected={selectedCountry} onSelect={setSelectedCountry} />
 
       {/* Market stats summary — psychology: social proof */}
       <section className="px-4 py-4"

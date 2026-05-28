@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Compass, TrendingUp, Zap, Menu, X } from "lucide-react";
+import { useCountry, countries } from "./country-context";
 
 const navItems = [
   { href: "/", label: "Feed", icon: Zap },
@@ -13,12 +14,13 @@ const navItems = [
 
 export function NavBar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { selected, setSelected } = useCountry();
 
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-tiktok-black/90 backdrop-blur-xl border-b border-white/5"
+      className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-b border-white/5"
     >
       <div className="max-w-lg mx-auto px-4 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
@@ -44,23 +46,32 @@ export function NavBar() {
             <span className="text-sm font-black tracking-tight text-white uppercase">
               TikTok
             </span>
-            <span className="text-[10px] font-bold tracking-[0.2em] text-tiktok-cyan uppercase">
+            <span className="text-[10px] font-bold tracking-[0.2em] text-[#00f2ea] uppercase">
               Intelligence
             </span>
           </div>
         </Link>
 
-        <nav className="hidden sm:flex items-center gap-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="px-3 py-1.5 text-xs font-medium text-white/60 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+        {/* Country switcher — fixed in navbar like TubeFission */}
+        <div className="hidden sm:flex items-center gap-1.5">
+          <span className="text-[9px] font-mono text-white/30 uppercase tracking-wider mr-1">
+            Region
+          </span>
+          {countries.map((country) => (
+            <button
+              key={country.code}
+              onClick={() => setSelected(country)}
+              className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition-all ${
+                selected.code === country.code
+                  ? "bg-white/10 text-white"
+                  : "text-white/40 hover:text-white/70 hover:bg-white/5"
+              }`}
             >
-              {item.label}
-            </Link>
+              <span className="text-sm">{country.flag}</span>
+              <span>{country.code}</span>
+            </button>
           ))}
-        </nav>
+        </div>
 
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -70,13 +81,14 @@ export function NavBar() {
         </button>
       </div>
 
+      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="sm:hidden bg-tiktok-black/95 backdrop-blur-xl border-t border-white/5 overflow-hidden"
+            className="sm:hidden bg-black/95 backdrop-blur-xl border-t border-white/5 overflow-hidden"
           >
             <div className="px-4 py-3 space-y-1">
               {navItems.map((item) => (
@@ -90,6 +102,31 @@ export function NavBar() {
                   {item.label}
                 </Link>
               ))}
+              {/* Mobile country switcher */}
+              <div className="pt-2 border-t border-white/5 mt-2">
+                <span className="text-[9px] font-mono text-white/30 uppercase tracking-wider px-3">
+                  Region
+                </span>
+                <div className="flex flex-wrap gap-1 mt-1 px-3">
+                  {countries.map((country) => (
+                    <button
+                      key={country.code}
+                      onClick={() => {
+                        setSelected(country);
+                        setMobileOpen(false);
+                      }}
+                      className={`flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium transition-all ${
+                        selected.code === country.code
+                          ? "bg-white/10 text-white"
+                          : "text-white/40 hover:text-white/70 hover:bg-white/5"
+                      }`}
+                    >
+                      <span>{country.flag}</span>
+                      <span>{country.code}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </motion.div>
         )}

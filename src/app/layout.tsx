@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { NavBar } from "@/components/nav-bar";
 import { StructuredData } from "@/components/structured-data";
+import { CountryProvider } from "@/components/country-context";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -110,8 +111,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white min-h-screen`}
       >
-        <NavBar />
-        <main className="pt-14">{children}</main>
+        <CountryProvider>
+          <NavBar />
+          <main className="pt-14">{children}</main>
+        </CountryProvider>
       </body>
     </html>
   );
