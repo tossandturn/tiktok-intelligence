@@ -1,12 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Zap, TrendingUp, ArrowRight } from "lucide-react";
+import { Zap, TrendingUp, ArrowRight, Clock, BarChart3 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[85vh] flex flex-col justify-end pb-8 pt-20 px-4 overflow-hidden">
+    <section className="relative min-h-[70vh] flex flex-col justify-end pb-8 pt-20 px-4 overflow-hidden">
       {/* Animated background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-tiktok-black via-tiktok-dark to-tiktok-black" />
 
@@ -27,7 +28,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="space-y-6"
+          className="space-y-5"
         >
           {/* Live indicator */}
           <motion.div
@@ -43,45 +44,78 @@ export function HeroSection() {
             <span className="text-[11px] font-mono text-white/60 uppercase tracking-wider">
               Live Intelligence
             </span>
+            <span className="text-[10px] text-white/30">|</span>
+            <span className="text-[11px] font-mono text-tiktok-cyan uppercase tracking-wider">
+              Updated 2m ago
+            </span>
           </motion.div>
 
-          {/* Headline */}
+          {/* Headline — clear value prop */}
           <h1 className="text-4xl sm:text-5xl font-bold leading-[1.1] tracking-tight text-white">
-            Discover trends{" "}
+            Discover TikTok trends{" "}
             <span className="bg-gradient-to-r from-tiktok-cyan to-tiktok-red bg-clip-text text-transparent">
               before
             </span>{" "}
             they explode
           </h1>
 
-          {/* Subtitle */}
+          {/* Subtitle — what the user gets */}
           <p className="text-base text-white/50 leading-relaxed max-w-sm">
-            Your daily intelligence terminal for TikTok creators. Real-time trend
-            signals, viral pattern detection, and creator insights — all in one place.
+            Real-time viral detection, AI-powered opportunity scores, and creator intelligence —
+            so you never miss the next big trend.
           </p>
 
-          {/* Stats row */}
-          <div className="flex items-center gap-6 py-2">
+          {/* Stats row — social proof */}
+          <div className="flex items-center gap-5 py-2">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-tiktok-cyan" />
               <span className="text-sm font-semibold text-white">2,847</span>
               <span className="text-xs text-white/40">active trends</span>
             </div>
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-tiktok-red" />
+              <Clock className="w-4 h-4 text-tiktok-red" />
               <span className="text-sm font-semibold text-white">48hrs</span>
               <span className="text-xs text-white/40">avg. early signal</span>
             </div>
           </div>
 
-          {/* CTA */}
-          <Link
-            href="/explore"
-            className="inline-flex items-center gap-2 bg-white text-tiktok-black px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/90 transition-colors group"
-          >
-            Explore Trends
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
+          {/* CTA — clear action */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              href="#opportunity"
+              className="inline-flex items-center justify-center gap-2 bg-white text-tiktok-black px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/90 transition-colors group"
+            >
+              <Zap className="w-4 h-4" />
+              Find My Next Viral Video
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+            <Link
+              href="/explore"
+              className="inline-flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Explore Analytics
+            </Link>
+          </div>
+
+          {/* Trust indicators — more social proof */}
+          <div className="flex items-center gap-4 pt-2">
+            <div className="flex -space-x-2">
+              {[
+                "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&fit=crop",
+                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop",
+                "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop",
+                "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop",
+              ].map((src, i) => (
+                <div key={i} className="w-7 h-7 rounded-full border-2 border-tiktok-black overflow-hidden relative">
+                  <Image src={src} alt="" fill className="object-cover" sizes="28px" />
+                </div>
+              ))}
+            </div>
+            <div className="text-xs text-white/30">
+              <span className="text-white/60 font-semibold">12,400+</span> creators using Intelligence daily
+            </div>
+          </div>
         </motion.div>
       </div>
 

@@ -21,17 +21,17 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#010101",
+  themeColor: "#000000",
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tiktok-intelligence.com"),
   title: {
-    default: "TikTok Intelligence Terminal — Discover Trends Before They Explode",
+    default: "TikTok Intelligence — Viral Trend Analytics & Creator Intelligence",
     template: "%s | TikTok Intelligence",
   },
   description:
-    "Daily intelligence terminal for TikTok creators. Real-time trend signals, viral pattern detection, and creator insights — all in one place.",
+    "Discover TikTok trends before they explode. Real-time viral analytics, AI-powered opportunity scores, country-specific trend data, and creator intelligence for content strategy.",
   keywords: [
     "TikTok trends",
     "viral trends",
@@ -41,6 +41,11 @@ export const metadata: Metadata = {
     "social media trends",
     "TikTok growth",
     "content strategy",
+    "TikTok data analysis",
+    "viral prediction",
+    "creator tools",
+    "TikTok market intelligence",
+    "trend forecasting",
   ],
   authors: [{ name: "TikTok Intelligence" }],
   creator: "TikTok Intelligence",
@@ -48,6 +53,7 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    nocache: false,
     googleBot: {
       index: true,
       follow: true,
@@ -60,23 +66,23 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://tiktok-intelligence.com",
-    siteName: "TikTok Intelligence Terminal",
-    title: "TikTok Intelligence Terminal — Discover Trends Before They Explode",
+    siteName: "TikTok Intelligence",
+    title: "TikTok Intelligence — Discover Trends Before They Explode",
     description:
-      "Daily intelligence terminal for TikTok creators. Real-time trend signals, viral pattern detection, and creator insights.",
+      "Real-time viral analytics, AI-powered opportunity scores, and country-specific trend intelligence for TikTok creators.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "TikTok Intelligence Terminal Preview",
+        alt: "TikTok Intelligence Dashboard Preview",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "TikTok Intelligence Terminal",
-    description: "Discover trends before they explode. Daily intelligence for TikTok creators.",
+    title: "TikTok Intelligence — Viral Trend Analytics",
+    description: "Discover trends before they explode. AI-powered intelligence for TikTok creators.",
     images: ["/og-image.jpg"],
     creator: "@tiktokintel",
   },
@@ -86,6 +92,8 @@ export const metadata: Metadata = {
   verification: {
     google: "your-google-verification-code",
   },
+  category: "technology",
+  classification: "Social Media Analytics",
 };
 
 export default function RootLayout({
@@ -100,7 +108,7 @@ export default function RootLayout({
         <StructuredData type="organization" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-tiktok-black text-white min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white min-h-screen`}
       >
         <NavBar />
         <main className="pt-14">{children}</main>

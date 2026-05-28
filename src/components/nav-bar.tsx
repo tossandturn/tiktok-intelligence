@@ -18,16 +18,36 @@ export function NavBar() {
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-tiktok-black/80 backdrop-blur-xl border-b border-white/5"
+      className="fixed top-0 left-0 right-0 z-50 bg-tiktok-black/90 backdrop-blur-xl border-b border-white/5"
     >
       <div className="max-w-lg mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-tiktok-cyan to-tiktok-red flex items-center justify-center">
-            <Zap className="w-4 h-4 text-white" />
+        <Link href="/" className="flex items-center gap-2.5">
+          {/* TikTok-style note logo */}
+          <div className="relative w-8 h-8 flex items-center justify-center">
+            <svg viewBox="0 0 32 32" fill="none" className="w-8 h-8">
+              <path
+                d="M24.5 8.5c-2.5 0-4.8-1.3-6.1-3.3v11.8c0 5.2-4.2 9.5-9.5 9.5S-.6 22.2-.6 17s4.2-9.5 9.5-9.5c.5 0 1 0 1.5.1v5.2c-.5-.1-1-.2-1.5-.2-2.4 0-4.3 1.9-4.3 4.3s1.9 4.3 4.3 4.3 4.3-1.9 4.3-4.3V0h5.1c.7 3.2 3.2 5.7 6.4 6.4v2.1z"
+                transform="translate(6, 4)"
+                fill="url(#tiktok-gradient)"
+              />
+              <defs>
+                <linearGradient id="tiktok-gradient" x1="0" y1="0" x2="32" y2="32">
+                  <stop offset="0%" stopColor="#00f2ea" />
+                  <stop offset="50%" stopColor="#00f2ea" />
+                  <stop offset="50%" stopColor="#ff0050" />
+                  <stop offset="100%" stopColor="#ff0050" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
-          <span className="text-sm font-bold tracking-tight text-white">
-            INTEL
-          </span>
+          <div className="flex flex-col leading-none">
+            <span className="text-sm font-black tracking-tight text-white uppercase">
+              TikTok
+            </span>
+            <span className="text-[10px] font-bold tracking-[0.2em] text-tiktok-cyan uppercase">
+              Intelligence
+            </span>
+          </div>
         </Link>
 
         <nav className="hidden sm:flex items-center gap-1">

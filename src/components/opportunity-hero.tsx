@@ -11,8 +11,10 @@ interface OpportunityHeroProps {
 }
 
 export function OpportunityHero({ trend }: OpportunityHeroProps) {
+  if (!trend) return null;
+
   return (
-    <section className="px-4 py-6">
+    <section className="px-4 py-6" id="opportunity">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-white flex items-center gap-2">
           <Target className="w-5 h-5 text-tiktok-cyan" />

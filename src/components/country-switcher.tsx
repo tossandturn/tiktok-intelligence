@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Globe, ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
 
-const countries = [
+export interface Country {
+  code: string;
+  name: string;
+  flag: string;
+}
+
+export const countries: Country[] = [
   { code: "US", name: "United States", flag: "🇺🇸" },
   { code: "GB", name: "United Kingdom", flag: "🇬🇧" },
   { code: "CA", name: "Canada", flag: "🇨🇦" },
@@ -17,59 +21,45 @@ const countries = [
   { code: "MX", name: "Mexico", flag: "🇲🇽" },
 ];
 
-export function CountrySwitcher() {
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(countries[0]);
+interface CountrySwitcherProps {
+  selected: Country;
+  onSelect: (country: Country) => void;
+}
 
+export function CountrySwitcher({ selected, onSelect }: CountrySwitcherProps) {
   return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-3 py-2 transition-colors"
-      >
-        <Globe className="w-4 h-4 text-white/60" />
-        <span className="text-sm font-medium text-white">{selected.flag}</span>
-        <span className="text-sm text-white/70 hidden sm:inline">{selected.name}</span>
-        <ChevronDown className={`w-3.5 h-3.5 text-white/40 transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
-
-      <AnimatePresence>
-        {open && (
-          <>
-            <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-            <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.95 }}
-              transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 w-56 bg-tiktok-black/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden z-50 shadow-2xl"
+    <section className="px-4 py-4 border-b border-white/5">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-[10px] font-mono text-white/30 uppercase tracking-wider">Select Market</span>
+        <div className="flex-1 h-px bg-white/5" />
+      </div>
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
+        {countries.map((country) => {
+          const isActive = selected.code === country.code;
+          return (
+            <motion.button
+              key={country.code}
+              onClick={() => onSelect(country)}
+              whileTap={{ scale: 0.95 }}
+              className={`relative flex-shrink-0 snap-start flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                isActive
+                  ? "bg-white text-tiktok-black"
+                  : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white"
+              }`}
             >
-              <div className="p-2 max-h-72 overflow-y-auto scrollbar-hide">
-                {countries.map((country) => (
-                  <button
-                    key={country.code}
-                    onClick={() => {
-                      setSelected(country);
-                      setOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                      selected.code === country.code
-                        ? "bg-white/10 text-white"
-                        : "text-white/60 hover:bg-white/5 hover:text-white"
-                    }`}
-                  >
-                    <span className="text-lg">{country.flag}</span>
-                    <span className="flex-1 text-left">{country.name}</span>
-                    {selected.code === country.code && (
-                      <div className="w-1.5 h-1.5 rounded-full bg-tiktok-cyan" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </div>
+              <span className="text-lg">{country.flag}</span>
+              <span className="whitespace-nowrap">{country.name}</span>
+              {isActive && (
+                <motion.div
+                  layoutId="activeCountry"
+                  className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-tiktok-cyan"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
+            </motion.button>
+          );
+        })}
+      </div>
+    </section>
   );
 }
