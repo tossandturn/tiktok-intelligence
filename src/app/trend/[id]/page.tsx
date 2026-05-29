@@ -224,7 +224,7 @@ export default async function TrendPage({ params }: Props) {
           </div>
           <div className="flex items-center gap-1.5 text-sm text-white/60">
             <Clock className="w-4 h-4" />
-            <span className="text-xs">{trend.createdAt.toISOString().split("T")[0]}</span>
+            <span className="text-xs">{trend.updatedAt.toISOString().split("T")[0]}</span>
           </div>
         </div>
       </div>
