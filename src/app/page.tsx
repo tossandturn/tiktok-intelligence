@@ -11,6 +11,7 @@ import { FeatureDeepDive } from "@/components/feature-deep-dive";
 import { Testimonials } from "@/components/testimonials";
 import { FAQ } from "@/components/faq";
 import { FinalCTA } from "@/components/final-cta";
+import { AdBanner } from "@/components/google-ad";
 
 export default function HomePage() {
   return (
@@ -18,11 +19,21 @@ export default function HomePage() {
       {/* 1. Hero Section */}
       <SaaSHero />
 
+      {/* Ad Banner after Hero */}
+      <div className="max-w-6xl mx-auto px-4">
+        <AdBanner />
+      </div>
+
       {/* 2. Social Proof */}
       <SocialProof />
 
       {/* 3. Trend Dashboard Preview */}
       <DashboardPreview />
+
+      {/* Ad Banner after Dashboard */}
+      <div className="max-w-6xl mx-auto px-4">
+        <AdBanner />
+      </div>
 
       {/* 4. Key Use Cases */}
       <UseCases />
@@ -38,6 +49,11 @@ export default function HomePage() {
 
       {/* 8. Feature Deep Dive */}
       <FeatureDeepDive />
+
+      {/* Ad Banner mid-page */}
+      <div className="max-w-6xl mx-auto px-4">
+        <AdBanner />
+      </div>
 
       {/* 9. Testimonials */}
       <Testimonials />

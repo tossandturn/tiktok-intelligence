@@ -1,26 +1,74 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, X, ExternalLink } from "lucide-react";
+import { Play, X, ExternalLink, Loader2 } from "lucide-react";
 import Image from "next/image";
 
 interface TikTokEmbedProps {
   videoId?: string;
+  username?: string;
   thumbnail: string;
   views: string;
   likes: string;
   duration: string;
   searchQuery?: string;
+  embedUrl?: string;
 }
 
-export function TikTokEmbed({ videoId, thumbnail, views, likes, duration, searchQuery }: TikTokEmbedProps) {
+export function TikTokEmbed({
+  videoId,
+  username,
+  thumbnail,
+  views,
+  likes,
+  duration,
+  searchQuery,
+  embedUrl
+}: TikTokEmbedProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [embedHtml, setEmbedHtml] = useState<string | null>(null);
+
+  const handleOpen = useCallback(() => {
+    setIsOpen(true);
+    setIsLoading(true);
+
+    // If we have an embed URL, fetch the oEmbed data
+    if (embedUrl) {
+      fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(embedUrl)}`)
+        .then(res => res.json())
+        .then(data => {
+          setEmbedHtml(data.html || null);
+          setIsLoading(false);
+        })
+        .catch(() => {
+          setEmbedHtml(null);
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+    }
+  }, [embedUrl]);
 
   const handleOpenTikTok = useCallback(() => {
     const query = searchQuery || (videoId ? `video ${videoId}` : "trending");
-    window.open(`https://www.tiktok.com/search?q=${encodeURIComponent(query)}`, "_blank", "noopener,noreferrer");
-  }, [searchQuery, videoId]);
+    const url = username && videoId
+      ? `https://www.tiktok.com/@${username}/video/${videoId}`
+      : `https://www.tiktok.com/search?q=${encodeURIComponent(query)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  }, [searchQuery, videoId, username]);
+
+  // Close on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleEscape);
+      return () => window.removeEventListener("keydown", handleEscape);
+    }
+  }, [isOpen]);
 
   return (
     <>
@@ -28,17 +76,15 @@ export function TikTokEmbed({ videoId, thumbnail, views, likes, duration, search
         initial={{ opacity: 0, scale: 0.9 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        className="flex-shrink-0 w-[160px] snap-start"
+        className="flex-shrink-0 w-[160px] snap-start cursor-pointer group"
+        onClick={handleOpen}
       >
-        <div
-          className="relative aspect-[9/16] rounded-xl overflow-hidden bg-white/5 group cursor-pointer"
-          onClick={() => setIsOpen(true)}
-        >
+        <div className="relative aspect-[9/16] rounded-xl overflow-hidden bg-white/5">
           <Image
             src={thumbnail}
             alt="Video thumbnail"
             fill
-            className="object-cover"
+            className="object-cover transition-transform group-hover:scale-105"
             sizes="160px"
           />
           <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
@@ -55,7 +101,7 @@ export function TikTokEmbed({ videoId, thumbnail, views, likes, duration, search
             {duration}
           </div>
 
-          {/* Stats overlay at bottom */}
+          {/* Stats overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
             <div className="flex items-center gap-2 text-[10px] text-white/80">
               <span className="flex items-center gap-0.5">
@@ -70,17 +116,24 @@ export function TikTokEmbed({ videoId, thumbnail, views, likes, duration, search
               </span>
             </div>
           </div>
+
+          {/* Hover overlay with watch text */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="bg-tiktok-cyan text-black text-xs font-bold px-3 py-1 rounded-full">
+              Click to Watch
+            </span>
+          </div>
         </div>
       </motion.div>
 
-      {/* Video Modal */}
+      {/* Video Modal with Embed */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={() => setIsOpen(false)}
           >
             <motion.div
@@ -88,52 +141,68 @@ export function TikTokEmbed({ videoId, thumbnail, views, likes, duration, search
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-sm"
+              className="relative w-full max-w-md"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close button */}
               <button
                 onClick={() => setIsOpen(false)}
-                className="absolute -top-12 right-0 p-2 text-white/60 hover:text-white transition-colors"
+                className="absolute -top-12 right-0 p-2 text-white/60 hover:text-white transition-colors z-10"
               >
                 <X className="w-6 h-6" />
               </button>
 
-              {/* Thumbnail with CTA */}
-              <div className="relative aspect-[9/16] w-full max-h-[70vh] rounded-xl overflow-hidden bg-black">
-                <Image
-                  src={thumbnail}
-                  alt="Video thumbnail"
-                  fill
-                  className="object-cover"
-                  sizes="400px"
-                />
-                <div className="absolute inset-0 bg-black/60" />
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6">
-                  <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
-                    <Play className="w-8 h-8 text-white fill-white ml-1" />
+              <div className="bg-black rounded-xl overflow-hidden border border-white/10">
+                {isLoading ? (
+                  <div className="aspect-[9/16] flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 text-tiktok-cyan animate-spin" />
                   </div>
-                  <p className="text-sm text-white/70 text-center">
-                    Preview not available — watch the full trend on TikTok
-                  </p>
-                  <button
-                    onClick={handleOpenTikTok}
-                    className="inline-flex items-center gap-2 bg-white text-tiktok-black px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/90 transition-colors"
-                  >
-                    Search on TikTok
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                ) : embedHtml ? (
+                  <div
+                    className="tiktok-embed-wrapper"
+                    dangerouslySetInnerHTML={{
+                      __html: embedHtml.replace(/width="\d+"/, 'width="100%"').replace(/height="\d+"/, 'height="600"')
+                    }}
+                  />
+                ) : (
+                  <div className="aspect-[9/16] relative">
+                    <Image
+                      src={thumbnail}
+                      alt="Video thumbnail"
+                      fill
+                      className="object-cover"
+                      sizes="400px"
+                    />
+                    <div className="absolute inset-0 bg-black/70" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6">
+                      <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                        <Play className="w-8 h-8 text-white fill-white ml-1" />
+                      </div>
+                      <p className="text-sm text-white/70 text-center">
+                        {username && videoId
+                          ? "Watch this video on TikTok"
+                          : "Preview available on TikTok"}
+                      </p>
+                      <button
+                        onClick={handleOpenTikTok}
+                        className="inline-flex items-center gap-2 bg-tiktok-cyan text-black px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-tiktok-cyan/90 transition-colors"
+                      >
+                        Watch on TikTok
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Open in TikTok button */}
-              <div className="mt-3 text-center">
+              {/* Action buttons */}
+              <div className="mt-4 flex items-center justify-center gap-3">
                 <button
                   onClick={handleOpenTikTok}
-                  className="inline-flex items-center gap-2 text-xs text-white/50 hover:text-tiktok-cyan transition-colors"
+                  className="inline-flex items-center gap-2 text-xs text-white/50 hover:text-white transition-colors px-4 py-2 bg-white/5 rounded-full"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
-                  Open original on TikTok
+                  Open in TikTok App
                 </button>
               </div>
             </motion.div>
@@ -141,5 +210,65 @@ export function TikTokEmbed({ videoId, thumbnail, views, likes, duration, search
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+// Full-width embed variant for detail pages
+interface TikTokFullEmbedProps {
+  embedUrl?: string;
+  fallbackImage?: string;
+}
+
+export function TikTokFullEmbed({ embedUrl, fallbackImage }: TikTokFullEmbedProps) {
+  const [embedHtml, setEmbedHtml] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (embedUrl) {
+      fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(embedUrl)}`)
+        .then(res => res.json())
+        .then(data => {
+          setEmbedHtml(data.html || null);
+          setIsLoading(false);
+        })
+        .catch(() => {
+          setEmbedHtml(null);
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+    }
+  }, [embedUrl]);
+
+  if (isLoading) {
+    return (
+      <div className="aspect-[9/16] max-h-[70vh] flex items-center justify-center bg-white/5 rounded-xl border border-white/10">
+        <Loader2 className="w-8 h-8 text-tiktok-cyan animate-spin" />
+      </div>
+    );
+  }
+
+  if (!embedHtml) {
+    return (
+      <div className="aspect-[9/16] max-h-[70vh] relative bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+        {fallbackImage && (
+          <Image src={fallbackImage} alt="Video" fill className="object-cover" />
+        )}
+        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+          <p className="text-white/50 text-sm">Video preview unavailable</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="tiktok-embed-full"
+      dangerouslySetInnerHTML={{
+        __html: embedHtml
+          .replace(/width="\d+"/, 'width="100%"')
+          .replace(/height="\d+"/, 'height="700"')
+      }}
+    />
   );
 }

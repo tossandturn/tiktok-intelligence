@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Compass, TrendingUp, Zap, Menu, X } from "lucide-react";
+import { Compass, TrendingUp, Zap, Menu, X, BarChart3 } from "lucide-react";
 import { useCountry, countries } from "./country-context";
 
 const navItems = [
   { href: "/", label: "Feed", icon: Zap },
   { href: "/explore", label: "Explore", icon: Compass },
   { href: "/trending", label: "Trending", icon: TrendingUp },
+  { href: "/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 export function NavBar() {

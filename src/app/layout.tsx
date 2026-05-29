@@ -109,6 +109,12 @@ export default function RootLayout({
         <StructuredData type="organization" />
         <StructuredData type="softwareApplication" />
         <StructuredData type="product" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6772936350717773"
+          crossOrigin="anonymous"
+        />
+        <meta name="google-adsense-account" content="ca-pub-6772936350717773" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white min-h-screen`}
