@@ -12,6 +12,7 @@ import { TikTokEmbed } from "@/components/tiktok-embed";
 import { RefreshIndicator } from "@/components/refresh-indicator";
 import { TrendHistoryChart } from "@/components/trend-history-chart";
 import { prisma } from "@/lib/prisma";
+import { trends as staticTrends } from "@/lib/data";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -47,35 +48,91 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  const trends = await prisma.trend.findMany({
+  // Get slugs from database
+  const dbTrends = await prisma.trend.findMany({
     select: { slug: true },
     take: 50,
   });
-  return trends.map((t) => ({ id: t.slug }));
+
+  // Combine with static data trend ids
+  const allIds = [
+    ...dbTrends.map((t) => ({ id: t.slug })),
+    ...staticTrends.map((t) => ({ id: t.id })),
+  ];
+
+  // Remove duplicates
+  const uniqueIds = Array.from(new Set(allIds.map((item) => item.id))).map(
+    (id) => ({ id })
+  );
+
+  return uniqueIds;
 }
 
 export default async function TrendPage({ params }: Props) {
   const { id } = await params;
 
-  const trend = await prisma.trend.findUnique({
+  // Try database first
+  let trend = await prisma.trend.findUnique({
     where: { slug: id },
     include: { tags: { include: { tag: true } } },
   });
 
+  let tags: string[] = [];
+  let source: "db" | "static" = "db";
+
+  // If not in database, try static data
+  if (!trend) {
+    const staticTrend = staticTrends.find((t) => t.id === id);
+    if (staticTrend) {
+      // Convert static trend to database format
+      trend = {
+        id: staticTrend.id,
+        slug: staticTrend.id,
+        title: staticTrend.title,
+        description: staticTrend.description,
+        category: staticTrend.category,
+        country: staticTrend.country || "US",
+        growthRate: staticTrend.growthRate,
+        views: staticTrend.views,
+        creators: staticTrend.creators,
+        thumbnail: staticTrend.thumbnail,
+        isViral: staticTrend.isViral,
+        isNew: staticTrend.isNew,
+        velocity: staticTrend.velocity || 0,
+        saturation: staticTrend.saturation || 0,
+        creatorFit: staticTrend.creatorFit || 0,
+        engagement: staticTrend.engagement || 0,
+        avgViews: staticTrend.avgViews || "0",
+        competition: staticTrend.competition || "MEDIUM",
+        viralScore: staticTrend.viralScore || 0,
+        opportunityScore: staticTrend.opportunityScore || 0,
+        whyItBlowsUp: staticTrend.whyItBlowsUp || null,
+        actionTime: staticTrend.actionTime || null,
+        aiPrediction: staticTrend.aiPrediction || null,
+        updatedAt: new Date(),
+        tags: [],
+      };
+      tags = staticTrend.tags || [];
+      source = "static";
+    }
+  } else {
+    tags = trend.tags.map((t: { tag: { name: string } }) => `#${t.tag.name}`);
+  }
+
   if (!trend) notFound();
 
   // Get related trends from same category
-  const relatedTrends = await prisma.trend.findMany({
-    where: {
-      category: trend.category,
-      slug: { not: id },
-    },
-    include: { tags: { include: { tag: true } } },
-    take: 3,
-    orderBy: { viralScore: "desc" },
-  });
-
-  const tags = trend.tags.map(t => `#${t.tag.name}`);
+  const relatedTrends = source === "db"
+    ? await prisma.trend.findMany({
+        where: {
+          category: trend.category,
+          slug: { not: id },
+        },
+        include: { tags: { include: { tag: true } } },
+        take: 3,
+        orderBy: { viralScore: "desc" },
+      })
+    : [];
 
   const articleData = {
     headline: trend.title,
