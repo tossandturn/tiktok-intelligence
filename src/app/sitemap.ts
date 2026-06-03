@@ -1,15 +1,24 @@
 import { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
+import { SEO_KEYWORDS } from "./topic/[keyword]/page";
 
 const BASE_URL = "https://tictok.tubefission.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static routes
-  const staticRoutes: MetadataRoute.Sitemap = ["", "/explore", "/trending"].map((route) => ({
+  const staticRoutes: MetadataRoute.Sitemap = ["", "/explore", "/trending", "/analytics", "/watchlist"].map((route) => ({
     url: `${BASE_URL}${route}`,
     lastModified: new Date(),
     changeFrequency: route === "" ? "daily" : "weekly",
     priority: route === "" ? 1.0 : 0.8,
+  }));
+
+  // SEO topic pages
+  const topicRoutes: MetadataRoute.Sitemap = SEO_KEYWORDS.map((topic) => ({
+    url: `${BASE_URL}/topic/${topic.keyword}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: 0.8,
   }));
 
   // Fetch all trends from database
@@ -67,11 +76,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // Fetch videos
+  const videos = await prisma.video.findMany({
+    select: { id: true, updatedAt: true },
+    take: 100,
+    orderBy: { views: "desc" },
+  });
+
+  const videoRoutes: MetadataRoute.Sitemap = videos.map((video) => ({
+    url: `${BASE_URL}/video/${video.id}`,
+    lastModified: video.updatedAt,
+    changeFrequency: "daily",
+    priority: 0.8,
+  }));
+
   return [
     ...staticRoutes,
+    ...topicRoutes,
     ...trendRoutes,
     ...creatorRoutes,
     ...hashtagRoutes,
     ...soundRoutes,
+    ...videoRoutes,
   ];
 }
