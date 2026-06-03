@@ -13,6 +13,7 @@ import {
   Flame, Play, User
 } from "lucide-react";
 import { TikTokEmbed } from "@/components/tiktok-embed";
+import VideoExport from "@/components/video-export";
 
 interface VideoPageProps {
   params: Promise<{ id: string }>;
@@ -190,6 +191,31 @@ export default async function VideoPage({ params }: VideoPageProps) {
             <div className="text-2xl font-bold text-green-400">{engagement}%</div>
           </Card>
         </div>
+
+        {/* Export Section */}
+        <Card className="bg-zinc-900 border-zinc-800 p-4 mt-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium text-zinc-400">Export Report</span>
+          </div>
+          <VideoExport
+            video={{
+              id: video.id,
+              url: video.url,
+              tiktokId: video.tiktokId,
+              views: video.views,
+              likes: video.likes || "0",
+              comments: video.comments,
+              shares: video.shares,
+              author: video.author,
+              description: video.description,
+              duration: video.duration,
+              viralScore: video.viralScore,
+              engagementRate: Number(engagement),
+              trend: video.trend
+            }}
+            velocity={views / 30}
+          />
+        </Card>
       </div>
 
       {/* AI Insights */}
