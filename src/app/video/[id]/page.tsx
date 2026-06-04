@@ -5,11 +5,11 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { WatchlistButton } from "@/components/watchlist-button";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import { Card } from "@/components/ui/card";
 import {
-  ArrowLeft, Eye, Heart, MessageCircle, Share2, Bookmark,
-  TrendingUp, Zap, Target, Clock, BarChart3, Sparkles,
+  ArrowLeft, Eye, Heart, MessageCircle, Share2,
+  Zap, Clock, BarChart3, Sparkles,
   Flame, Play, User
 } from "lucide-react";
 import { TikTokEmbed } from "@/components/tiktok-embed";
@@ -102,13 +102,6 @@ export default async function VideoPage({ params }: VideoPageProps) {
     insights.push({ icon: "❤️", title: "Like Magnet", desc: `${likeRate}% like rate indicates strong content appeal`, level: "medium" });
   }
 
-  // Mock growth data (in production would come from time-series data)
-  const days = ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"];
-  const growthData = days.map((day, i) => ({
-    name: day,
-    views: Math.round(views * (0.1 + i * 0.15)),
-    likes: Math.round(likes * (0.1 + i * 0.15)),
-  }));
 
   return (
     <div className="min-h-screen bg-black">
@@ -150,9 +143,9 @@ export default async function VideoPage({ params }: VideoPageProps) {
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ff0050] to-[#ff4080] flex items-center justify-center">
                 <User className="w-4 h-4 text-white" />
               </div>
-              <span className="text-zinc-400 text-sm">@{video.author || "creator"}</span>
+              <span className="text-zinc-400 text-sm">@{video.trend?.slug || "creator"}</span>
             </div>
-            <p className="text-zinc-500 text-sm leading-relaxed">{video.description}</p>
+            <p className="text-zinc-500 text-sm leading-relaxed">{video.trend?.description}</p>
           </div>
           <div className="flex gap-2">
             <WatchlistButton type="trend" id={video.trendId || ""} variant="icon" />
@@ -200,15 +193,15 @@ export default async function VideoPage({ params }: VideoPageProps) {
           <VideoExport
             video={{
               id: video.id,
-              url: video.url,
-              tiktokId: video.tiktokId,
+              url: video.url ?? undefined,
+              tiktokId: video.tiktokId ?? undefined,
               views: video.views,
               likes: video.likes || "0",
               comments: video.comments,
               shares: video.shares,
-              author: video.author,
-              description: video.description,
-              duration: video.duration,
+              author: video.trend?.slug || "creator",
+              description: video.trend?.description || "",
+              duration: video.duration ?? undefined,
               viralScore: video.viralScore,
               engagementRate: Number(engagement),
               trend: video.trend
@@ -335,7 +328,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
                 {v.thumbnail ? (
                   <Image
                     src={v.thumbnail}
-                    alt={v.description || "TikTok video"}
+                    alt="TikTok video"
                     fill
                     className="object-cover group-hover:scale-105 transition duration-300"
                   />
