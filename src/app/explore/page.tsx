@@ -1,77 +1,66 @@
-import { Suspense } from "react";
+"use client";
+
+import { Suspense, useState, useEffect } from "react";
 import { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
 import ExploreContent from "./explore-content";
 import { DailyInsightsSection } from "@/components/daily-insights-section";
+import { useCountry } from "@/components/country-context";
+import { Loader2 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Explore Creators, Hashtags & Sounds | TikTok Intelligence",
   description: "Discover top TikTok creators, trending hashtags, and viral sounds. Analytics and insights for TikTok content strategy.",
 };
 
-// Generate static paths for SEO
-export async function generateStaticParams() {
-  return [{}]; // Single static page
+interface ExploreData {
+  creators: Array<Record<string, unknown>>;
+  hashtags: Array<Record<string, unknown>>;
+  sounds: Array<Record<string, unknown>>;
 }
 
-async function getExploreData() {
-  const creators = await prisma.creator.findMany({
-    take: 50,
-    orderBy: { followers: "desc" },
-    select: {
-      id: true,
-      username: true,
-      displayName: true,
-      avatar: true,
-      followers: true,
-      niche: true,
-      momentumScore: true,
-      isVerified: true,
-    },
-  });
-
-  const hashtags = await prisma.hashtag.findMany({
-    take: 50,
-    orderBy: [
-      { isRising: "desc" },
-      { viralScore: "desc" },
-    ],
-    select: {
-      id: true,
-      name: true,
-      views: true,
-      videos: true,
-      growthRate: true,
-      category: true,
-      isRising: true,
-      viralScore: true,
-    },
-  });
-
-  const sounds = await prisma.sound.findMany({
-    take: 50,
-    orderBy: [
-      { isViral: "desc" },
-      { uses: "desc" },
-    ],
-    select: {
-      id: true,
-      title: true,
-      author: true,
-      thumbnail: true,
-      uses: true,
-      growthRate: true,
-      isViral: true,
-      viralScore: true,
-      trendingSince: true,
-    },
-  });
-
-  return { creators, hashtags, sounds };
+function ExploreLoading() {
+  return (
+    <div className="max-w-6xl mx-auto px-4 pt-6 pb-12 min-h-[50vh] flex flex-col items-center justify-center gap-4">
+      <Loader2 className="w-8 h-8 text-tiktok-cyan animate-spin" />
+      <p className="text-white/60 text-sm">Loading explore data...</p>
+    </div>
+  );
 }
 
-export default async function ExplorePage() {
-  const data = await getExploreData();
+export default function ExplorePage() {
+  const { selected: selectedCountry } = useCountry();
+  const [data, setData] = useState<ExploreData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchExploreData() {
+      setLoading(true);
+      try {
+        const [creatorsRes, hashtagsRes, soundsRes] = await Promise.all([
+          fetch(`/api/creators?country=${selectedCountry.code}&limit=50`),
+          fetch(`/api/hashtags?country=${selectedCountry.code}&limit=50`),
+          fetch(`/api/sounds?country=${selectedCountry.code}&limit=50`),
+        ]);
+
+        const creators = creatorsRes.ok ? await creatorsRes.json() : [];
+        const hashtags = hashtagsRes.ok ? await hashtagsRes.json() : [];
+        const sounds = soundsRes.ok ? await soundsRes.json() : [];
+
+        setData({
+          creators: creators.data || [],
+          hashtags: hashtags.data || [],
+          sounds: sounds.data || [],
+        });
+      } catch (err) {
+        console.error("Failed to fetch explore data:", err);
+        setData({ creators: [], hashtags: [], sounds: [] });
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchExploreData();
+  }, [selectedCountry.code]);
 
   return (
     <div className="min-h-screen bg-black">
@@ -80,21 +69,12 @@ export default async function ExplorePage() {
 
       {/* Main Explore Content */}
       <div className="pt-20">
-        <Suspense fallback={
-          <div className="max-w-6xl mx-auto px-4 pt-6 pb-12">
-            <div className="animate-pulse space-y-4">
-              <div className="h-8 bg-white/5 rounded w-1/3" />
-              <div className="h-10 bg-white/5 rounded w-full" />
-              <div className="h-6 bg-white/5 rounded w-2/3" />
-              <div className="space-y-3">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-24 bg-white/5 rounded-xl" />
-                ))}
-              </div>
-            </div>
-          </div>
-        }>
-          <ExploreContent initialData={data} />
+        <Suspense fallback={<ExploreLoading />}>
+          {loading || !data ? (
+            <ExploreLoading />
+          ) : (
+            <ExploreContent initialData={data} />
+          )}
         </Suspense>
       </div>
     </div>

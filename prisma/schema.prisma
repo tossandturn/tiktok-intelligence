@@ -123,6 +123,7 @@ model Creator {
   likes               Int      @default(0)
   niche               String?
   bio                 String?
+  country             String   @default("US")
   isVerified          Boolean  @default(false)
   // AI Metrics
   momentumScore       Float    @default(0)
@@ -202,6 +203,7 @@ model Sound {
   title       String
   author      String?
   thumbnail   String?
+  country     String   @default("US")
   uses        Int      @default(0)
   growthRate  Float    @default(0)
   isViral     Boolean  @default(false)
