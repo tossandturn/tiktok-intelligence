@@ -422,7 +422,8 @@ async function runDiscoverScrape(country: string) {
   console.log(`[SCRAPE] Starting discover scrape for ${country}...`);
 
   try {
-    const hashtags = await scrapeDiscover(30);
+    // Scrape more hashtags (100 instead of 30)
+    const hashtags = await scrapeDiscover(100);
 
     for (const h of hashtags) {
       await saveHashtagAndSnapshot(
@@ -447,12 +448,14 @@ async function runDiscoverScrape(country: string) {
 async function runHashtagDeepDive(hashtagNames: string[], country: string) {
   console.log(`[SCRAPE] Starting hashtag deep dive for ${country}...`);
 
-  for (const name of hashtagNames.slice(0, 5)) {
+  // Process more hashtags (10 instead of 5)
+  for (const name of hashtagNames.slice(0, 10)) {
     try {
       const trend = await scrapeHashtag(name);
       if (!trend) continue;
 
-      const videos = await scrapeHashtagVideos(name, 10);
+      // Scrape more videos per hashtag (20 instead of 10)
+      const videos = await scrapeHashtagVideos(name, 20);
       const slug = trend.hashtag.replace("#", "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
       // Upsert trend
