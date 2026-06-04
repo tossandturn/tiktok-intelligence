@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && prisma migrate deploy && next build",
     "build:with-db": "prisma generate && prisma migrate deploy && npx tsx prisma/seed.ts && next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "npx tsx prisma/seed.ts"
+    "seed": "npx tsx prisma/seed.ts",
+    "scrape": "npx tsx scripts/scrape-job.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
