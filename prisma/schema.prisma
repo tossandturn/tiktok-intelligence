@@ -162,7 +162,8 @@ model CreatorVideo {
 
 model Hashtag {
   id          String   @id @default(cuid())
-  name        String   @unique
+  name        String
+  country     String   @default("US")
   views       String   @default("0")
   videos      Int      @default(0)
   growthRate  Float    @default(0)
@@ -179,6 +180,8 @@ model Hashtag {
   // Relations
   watchlists  Watchlist[]
 
+  @@unique([name, country])
+  @@index([country])
   @@index([isRising])
   @@index([growthRate])
   @@index([velocity])
@@ -234,6 +237,34 @@ model ScrapeLog {
   metadata  Json?
   startedAt DateTime @default(now())
   endedAt   DateTime?
+}
+
+// Daily country statistics - word cloud and booming keywords
+model CountryDailyStats {
+  id            String   @id @default(cuid())
+  country       String
+  date          DateTime @default(now())
+
+  // Word cloud data - top hashtags with scores
+  wordCloud     Json?    // Array of {name, weight, viralScore, trendDirection}
+
+  // Booming keywords - fastest growing
+  boomingKeywords Json?  // Array of {name, growthRate, views, rank}
+
+  // Top performing hashtags for the day
+  topHashtags   Json?    // Array of hashtag names
+
+  // Statistics
+  totalVideos   Int      @default(0)
+  totalViews    String   @default("0")
+  avgEngagement Float?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([country, date])
+  @@index([country])
+  @@index([date])
 }
 
 // User Authentication Models

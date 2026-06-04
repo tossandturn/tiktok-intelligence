@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import ExploreContent from "./explore-content";
+import { DailyInsightsSection } from "@/components/daily-insights-section";
 
 export const metadata: Metadata = {
   title: "Explore Creators, Hashtags & Sounds | TikTok Intelligence",
@@ -73,23 +74,29 @@ export default async function ExplorePage() {
   const data = await getExploreData();
 
   return (
-    <div className="min-h-screen bg-black pt-20">
-      <Suspense fallback={
-        <div className="max-w-6xl mx-auto px-4 pt-6 pb-12">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-white/5 rounded w-1/3" />
-            <div className="h-10 bg-white/5 rounded w-full" />
-            <div className="h-6 bg-white/5 rounded w-2/3" />
-            <div className="space-y-3">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-24 bg-white/5 rounded-xl" />
-              ))}
+    <div className="min-h-screen bg-black">
+      {/* Daily Insights Section */}
+      <DailyInsightsSection />
+
+      {/* Main Explore Content */}
+      <div className="pt-20">
+        <Suspense fallback={
+          <div className="max-w-6xl mx-auto px-4 pt-6 pb-12">
+            <div className="animate-pulse space-y-4">
+              <div className="h-8 bg-white/5 rounded w-1/3" />
+              <div className="h-10 bg-white/5 rounded w-full" />
+              <div className="h-6 bg-white/5 rounded w-2/3" />
+              <div className="space-y-3">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-24 bg-white/5 rounded-xl" />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      }>
-        <ExploreContent initialData={data} />
-      </Suspense>
+        }>
+          <ExploreContent initialData={data} />
+        </Suspense>
+      </div>
     </div>
   );
 }
