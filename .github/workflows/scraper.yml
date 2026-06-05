@@ -60,6 +60,32 @@ jobs:
           echo ""
           echo "Update scrape completed"
 
+      - name: Sync PrimeApi Hashtags (US)
+        if: github.event_name == 'schedule' || inputs.mode == 'full'
+        run: |
+          echo "Syncing PrimeApi hashtags for US..."
+          curl -s -X GET "https://tiktok.tubefission.com/api/cron/prime-sync?key=${{ secrets.CRON_SECRET_KEY }}&country=US&limit=20" \
+            -H "User-Agent: GitHub-Actions-Scraper/1.0" \
+            --max-time 60 \
+            -o prime_us.json \
+            -w "HTTP Status: %{http_code}\n"
+          cat prime_us.json
+          echo ""
+          echo "PrimeApi US sync completed"
+
+      - name: Sync PrimeApi Hashtags (JP)
+        if: github.event_name == 'schedule' || inputs.mode == 'full'
+        run: |
+          echo "Syncing PrimeApi hashtags for JP..."
+          curl -s -X GET "https://tiktok.tubefission.com/api/cron/prime-sync?key=${{ secrets.CRON_SECRET_KEY }}&country=JP&limit=10" \
+            -H "User-Agent: GitHub-Actions-Scraper/1.0" \
+            --max-time 60 \
+            -o prime_jp.json \
+            -w "HTTP Status: %{http_code}\n"
+          cat prime_jp.json
+          echo ""
+          echo "PrimeApi JP sync completed"
+
       - name: Upload response logs
         if: always()
         uses: actions/upload-artifact@v4
