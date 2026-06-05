@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { TrendingUp, Eye, Clock, Sparkles, Users, Hash, Music, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useCountry } from "@/components/country-context";
@@ -16,6 +17,41 @@ interface MissedItem {
   reason: string;
   thumbnail?: string;
   slug?: string;
+}
+
+interface TrendData {
+  id: string;
+  title: string;
+  category?: string;
+  growthRate: number;
+  views?: string;
+  isNew?: boolean;
+  thumbnail?: string;
+  slug?: string;
+}
+
+interface CreatorData {
+  id: string;
+  username: string;
+  displayName?: string;
+  avatar?: string;
+  niche?: string;
+  predictedGrowth7d?: number;
+  momentumScore?: number;
+}
+
+interface HashtagData {
+  id: string;
+  name: string;
+  videos?: number;
+  views?: string;
+  growthRate: number;
+  isRising?: boolean;
+}
+
+interface ApiResponse<T> {
+  data: T[];
+  meta?: { total: number; limit: number; offset: number };
 }
 
 export function YouMayMiss() {
@@ -34,13 +70,13 @@ export function YouMayMiss() {
           fetch(`/api/hashtags?country=${selected.code}&limit=3&rising=true`),
         ]);
 
-        const trendsData = await trendsRes.json();
-        const creatorsData = await creatorsRes.json();
-        const hashtagsData = await hashtagsRes.json();
+        const trendsData: ApiResponse<TrendData> = await trendsRes.json();
+        const creatorsData: ApiResponse<CreatorData> = await creatorsRes.json();
+        const hashtagsData: ApiResponse<HashtagData> = await hashtagsRes.json();
 
         const missedItems: MissedItem[] = [
           // Rising trends with high potential
-          ...(trendsData.data || []).slice(0, 3).map((t: any) => ({
+          ...(trendsData.data || []).slice(0, 3).map((t) => ({
             id: t.id,
             type: "trend" as const,
             title: t.title,
@@ -52,7 +88,7 @@ export function YouMayMiss() {
             slug: t.slug,
           })),
           // Rising creators
-          ...(creatorsData.data || []).slice(0, 2).map((c: any) => ({
+          ...(creatorsData.data || []).slice(0, 2).map((c) => ({
             id: c.id,
             type: "creator" as const,
             title: c.displayName || c.username,
@@ -63,7 +99,7 @@ export function YouMayMiss() {
             slug: c.username,
           })),
           // Rising hashtags
-          ...(hashtagsData.data || []).slice(0, 3).map((h: any) => ({
+          ...(hashtagsData.data || []).slice(0, 3).map((h) => ({
             id: h.id,
             type: "hashtag" as const,
             title: `#${h.name}`,
@@ -193,9 +229,11 @@ export function YouMayMiss() {
                     {/* Thumbnail or Icon */}
                     <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-zinc-900">
                       {item.thumbnail ? (
-                        <img
+                        <Image
                           src={item.thumbnail}
                           alt={item.title}
+                          width={56}
+                          height={56}
                           className="w-full h-full object-cover"
                         />
                       ) : (
