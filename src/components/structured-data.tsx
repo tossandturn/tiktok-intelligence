@@ -19,12 +19,12 @@ export function StructuredData({ type, data }: StructuredDataProps) {
           ...base,
           "@type": "WebSite",
           name: "TikTok Intelligence Terminal",
-          url: "https://tiktok-intelligence.com",
+          url: "https://tiktok.tubefission.com",
           description:
             "Daily intelligence terminal for TikTok creators. Discover trends before they explode.",
           potentialAction: {
             "@type": "SearchAction",
-            target: "https://tiktok-intelligence.com/explore?q={search_term_string}",
+            target: "https://tiktok.tubefission.com/explore?q={search_term_string}",
             "query-input": "required name=search_term_string",
           },
         };
@@ -33,8 +33,8 @@ export function StructuredData({ type, data }: StructuredDataProps) {
           ...base,
           "@type": "Organization",
           name: "TikTok Intelligence",
-          url: "https://tiktok-intelligence.com",
-          logo: "https://tiktok-intelligence.com/logo.png",
+          url: "https://tiktok.tubefission.com",
+          logo: "https://tiktok.tubefission.com/logo.png",
           sameAs: [
             "https://twitter.com/tiktokintel",
             "https://instagram.com/tiktokintel",
@@ -67,7 +67,7 @@ export function StructuredData({ type, data }: StructuredDataProps) {
           name: "TikTok Intelligence",
           applicationCategory: "SocialMediaAnalytics",
           operatingSystem: "Web",
-          url: "https://tiktok-intelligence.com",
+          url: "https://tiktok.tubefission.com",
           description:
             "AI-powered TikTok trend analytics and creator intelligence platform. Discover viral trends before they explode.",
           offers: {
@@ -86,7 +86,7 @@ export function StructuredData({ type, data }: StructuredDataProps) {
           ...base,
           "@type": "Product",
           name: "TikTok Intelligence",
-          image: "https://tiktok-intelligence.com/og-image.jpg",
+          image: "https://tiktok.tubefission.com/og-image.jpg",
           description:
             "Real-time viral analytics, AI-powered opportunity scores, and country-specific trend intelligence for TikTok creators.",
           brand: {
@@ -95,7 +95,7 @@ export function StructuredData({ type, data }: StructuredDataProps) {
           },
           offers: {
             "@type": "Offer",
-            url: "https://tiktok-intelligence.com",
+            url: "https://tiktok.tubefission.com",
             price: "0",
             priceCurrency: "USD",
             availability: "https://schema.org/InStock",

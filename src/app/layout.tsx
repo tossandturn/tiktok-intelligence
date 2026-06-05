@@ -27,7 +27,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://tiktok-intelligence.com"),
+  metadataBase: new URL("https://tiktok.tubefission.com"),
   title: {
     default: "TikTok Intelligence — Viral Trend Analytics & Creator Intelligence",
     template: "%s | TikTok Intelligence",
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://tiktok-intelligence.com",
+    url: "https://tiktok.tubefission.com",
     siteName: "TikTok Intelligence",
     title: "TikTok Intelligence — Discover Trends Before They Explode",
     description:
@@ -89,7 +89,7 @@ export const metadata: Metadata = {
     creator: "@tiktokintel",
   },
   alternates: {
-    canonical: "https://tiktok-intelligence.com",
+    canonical: "https://tiktok.tubefission.com",
   },
   verification: {
     google: "your-google-verification-code",

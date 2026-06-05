@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     description: "Browse all trending signals and viral patterns across TikTok categories.",
   },
   alternates: {
-    canonical: "https://tiktok-intelligence.com/explore",
+    canonical: "https://tiktok.tubefission.com/explore",
   },
 };
 

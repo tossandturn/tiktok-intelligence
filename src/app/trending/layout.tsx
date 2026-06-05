@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     description: "The fastest-growing viral trends on TikTok right now, ranked by opportunity score.",
   },
   alternates: {
-    canonical: "https://tiktok-intelligence.com/trending",
+    canonical: "https://tiktok.tubefission.com/trending",
   },
 };
 

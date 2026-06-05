@@ -16,7 +16,7 @@ jobs:
       - name: Check last run status
         run: |
           echo "Checking scraper status..."
-          curl -s -X GET "https://tiktok-intelligence-eta.vercel.app/api/cron/logs?key=${{ secrets.CRON_SECRET_KEY }}&limit=10" \
+          curl -s -X GET "https://tiktok.tubefission.com/api/cron/logs?key=${{ secrets.CRON_SECRET_KEY }}&limit=10" \
             -H "User-Agent: GitHub-Actions-Status/1.0" \
             --max-time 30 \
             -o status.json

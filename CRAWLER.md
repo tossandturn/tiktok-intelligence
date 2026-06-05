@@ -102,14 +102,14 @@ curl "http://localhost:3000/api/cron/scrape?key=$CRON_SECRET_KEY&mode=full"
 生产环境手动触发：
 ```bash
 # 获取你的 CRON_SECRET_KEY 值，替换 YOUR_SECRET_KEY
-curl "https://tiktok-intelligence-eta.vercel.app/api/cron/scrape?key=YOUR_SECRET_KEY&mode=full"
+curl "https://tiktok.tubefission.com/api/cron/scrape?key=YOUR_SECRET_KEY&mode=full"
 ```
 
 ## 查看爬虫日志
 
 ```bash
 # 查看最近50条日志
-curl "https://tiktok-intelligence-eta.vercel.app/api/cron/logs?key=YOUR_SECRET_KEY&limit=50"
+curl "https://tiktok.tubefission.com/api/cron/logs?key=YOUR_SECRET_KEY&limit=50"
 ```
 
 日志包含：

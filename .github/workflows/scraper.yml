@@ -32,7 +32,7 @@ jobs:
         if: github.event_name == 'schedule' || inputs.mode == 'discover' || inputs.mode == 'full'
         run: |
           echo "Running discover scrape..."
-          curl -s -X GET "https://tiktok-intelligence-eta.vercel.app/api/cron/scrape?key=${{ secrets.CRON_SECRET_KEY }}&mode=discover" \
+          curl -s -X GET "https://tiktok.tubefission.com/api/cron/scrape?key=${{ secrets.CRON_SECRET_KEY }}&mode=discover" \
             -H "User-Agent: GitHub-Actions-Scraper/1.0" \
             --max-time 300 \
             -o discover_response.json \
@@ -51,7 +51,7 @@ jobs:
         if: github.event_name == 'schedule' || inputs.mode == 'update' || inputs.mode == 'full'
         run: |
           echo "Running update scrape..."
-          curl -s -X GET "https://tiktok-intelligence-eta.vercel.app/api/cron/scrape?key=${{ secrets.CRON_SECRET_KEY }}&mode=update" \
+          curl -s -X GET "https://tiktok.tubefission.com/api/cron/scrape?key=${{ secrets.CRON_SECRET_KEY }}&mode=update" \
             -H "User-Agent: GitHub-Actions-Scraper/1.0" \
             --max-time 300 \
             -o update_response.json \

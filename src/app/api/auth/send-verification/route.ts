@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { randomBytes } from "crypto";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://tiktok-intelligence.com";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://tiktok.tubefission.com";
 
 function generateToken(): string {
   return randomBytes(16).toString("hex");
